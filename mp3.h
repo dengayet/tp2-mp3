@@ -4,9 +4,31 @@
 #include <stdio.h>
 #include "errors.h"
 
+
+#define MP3_HEADER_SIZE		128
+
+#define LEXEM_START_TAG     0
+#define LEXEM_SPAN_TAG      3
+
+#define LEXEM_START_TITLE   3
+#define LEXEM_SPAN_TITLE   30
+
+#define LEXEM_START_ARTIST 33
+#define LEXEM_SPAN_ARTIST  30
+
+#define LEXEM_START_ALBUM  63
+#define LEXEM_SPAN_ALBUM   30
+
+#define LEXEM_START_YEAR   93
+#define LEXEM_SPAN_YEAR     4
+
+#define LEXEM_START_COMMENT 97
+#define LEXEM_SPAN_COMMENT  30
+
+#define LEXEM_START_GENRE  127
+#define LEXEM_SPAN_GENRE     1
 #define MAX_GENRES 126
-#define MAX_NAME_LEN 35
-#define MAX_ARTIST_LEN 35
+
 
 typedef enum
 {
@@ -141,17 +163,20 @@ typedef enum
 
 typedef struct
 {
-    char * name[MAX_NAME_LEN + 1];
-    char * artist[MAX_ARTIST_LEN + 1];
+    char * tag[LEXEM_SPAN_TAG +1];
+    char * title[LEXEM_SPAN_TITLE + 1];
+    char * artist[LEXEM_SPAN_ARTIST +1];
+    char * album[LEXEM_SPAN_ALBUM +1];
     short year;
     genre_t genre;
 }ADT_Track_t;
 
-status_t ADT_Track_new_from_CSV (FILE *, ADT_Track_t **);
-status_t ADT_Track_new_from_XML (FILE *, ADT_Track_t **);
+status_t ADT_Track_new_from_binary_file (FILE *, ADT_Track_t **);
+status_t ADT_Track_load_from_binary_file (FILE*, ADT_Track_t **);
 status_t ADT_Track_delete(ADT_Track_t **, status_t (*destroy)(ADT_Track_t **));
 status_t ADT_Track_compare(ADT_Track_t *, ADT_Track_t *);
 
+status_t ADT_Track_read_header (FILE *, char *[]);
 
 
 

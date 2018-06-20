@@ -31,7 +31,7 @@ status_t validate_arguments(int argc, char ** argv, size_t * i, size_t * j)
             if (!strcmp(argv[FORMAT_POSITION], formats[*i]))
                 break;
         }
-        if (*i > MAX_FORMATS)
+        if (*i >= MAX_FORMATS)
             return ERROR_INVALID_ARGUMENTS;
     }
     if(strcmp(argv[SORT_FLAG_POSITION],SORT_FLAG))
@@ -42,7 +42,7 @@ status_t validate_arguments(int argc, char ** argv, size_t * i, size_t * j)
             if(!strcmp(argv[SORT_POSITION], sort_criterion[*j]))
                 break;
         }
-        if(*j > MAX_SORTING_CRITERION)
+        if(*j >= MAX_SORTING_CRITERION)
             return ERROR_INVALID_ARGUMENTS;
     }
     if(strcmp(argv[FO_FLAG_POSITION],FO_FLAG))

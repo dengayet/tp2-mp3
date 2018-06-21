@@ -12,7 +12,7 @@ status_t ADT_Vector_new (ADT_Vector_t ** p)
         return ERROR_NULL_POINTER;
     if((*p = (ADT_Vector_t*)malloc(sizeof(ADT_Vector_t)))==NULL)
         return ERROR_OUT_OF_MEMORY;
-    (*p) -> elements = NULL;
+    /////(*p) -> elements = NULL;  ESTO NO VA SI SE HACEMOS LO DE LA LINEA 17 ////
     (*p) -> size = (*p) -> alloc_size = 0;
     if(((*p)-> elements = (void **)malloc(sizeof(void*)*INIT_CHOP))== NULL)
     {

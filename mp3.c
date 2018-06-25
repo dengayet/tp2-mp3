@@ -143,8 +143,11 @@ status_t ADT_Track_new_from_binary_file (FILE * f, ADT_Track_t ** track) /*deber
         return ERROR_NULL_POINTER;
     if ((*track = (ADT_Track_t *) malloc(sizeof(ADT_Track_t))) == NULL)
         return ERROR_OUT_OF_MEMORY;
-    if ((st = ADT_Track_read_header(f, &header)) != OK) /*no recuerdo como se hace esto jeje*/
-        return st;
+    if ((st = read_header(f, header)) != OK)
+        {/*no recuerdo como se hace esto jeje*/
+            free(*track);
+            return st;
+        }
     memcpy((*track)->tag, header + LEXEM_START_TAG, LEXEM_SPAN_TAG);
     ((*track)->tag)[LEXEM_SPAN_TAG] = '\0';
     memcpy((*track)->title,header + LEXEM_START_TITLE, LEXEM_SPAN_TITLE);
@@ -157,14 +160,16 @@ status_t ADT_Track_new_from_binary_file (FILE * f, ADT_Track_t ** track) /*deber
     buf[LEXEM_SPAN_YEAR] = '\0';
     (*track)->year = strtol(buf, &temp, 10); /*fulero*/
     if(*temp)
-        return ERROR_INVALID_ARGUMENTS; /*cambiar */
-    memcpy(buf, header + LEXEM_START_GENRE, LEXEM_SPAN_GENRE);
+    {
+        free(*track);
+        return ERROR_INVALID_ARGUMENTS;
+    } /*cambiar */
+    memcpy((*track)->genre, header + LEXEM_START_GENRE, LEXEM_SPAN_GENRE); /*revisar*/
     buf[LEXEM_SPAN_GENRE] = '\0';
-    /*strcmp para 127 cosas?? zarpado.*/
     return OK;
 }
 
-status_t ADT_Track_read_header(FILE * f, char ** header) /*ya necesito memoria reservada para no usar mem din*/
+status_t read_header(FILE * f, char * header) /*ya necesito memoria reservada para no usar mem din*/
 {
     long int length;
 
@@ -173,7 +178,39 @@ status_t ADT_Track_read_header(FILE * f, char ** header) /*ya necesito memoria r
     fseek(f, 0, SEEK_END);
     length = ftell(f);
     fseek(f,length-MP3_HEADER_SIZE,SEEK_SET);
-    fread(*header, sizeof(char), MP3_HEADER_SIZE, f);
+    fread(header, sizeof(char), MP3_HEADER_SIZE, f);
     return OK;
 }
+
+status_t ADT_Track_delete (ADT_Track_t ** track)
+{
+    if(track == NULL)
+        return ERROR_NULL_POINTER;
+    free (*track);
+    (*track) = NULL;
+    return OK;
+}
+
+status_t ADT_Track_print_to_csv (FILE * fo, ADT_Track_t * track)
+{
+    if(fo == NULL || track == NULL)
+        return ERROR_NULL_POINTER;
+    fprintf(fo, "%s|%s|%s|%s|%d|%s", track->tag, track->title, track->artist, track->album, track->year, track->genre);
+    return OK;
+}
+
+status_t ADT_Track_print_to_xml (FILE * fo, ADT_Track_t * track)
+{
+    if(fo == NULL || track == NULL)
+        return ERROR_NULL_POINTER;
+    fprintf(fo,"\t<track>");
+    fprintf(fo,"\t<tag>%s</tag>\n", track->tag);
+    fprintf(fo,"\t\t<title>%s</title>\n", track->title);
+    fprintf(fo,"\t\t\t<artist>%s</artist>\n", track->artist);
+    fprintf(fo,"\t\t\t\t<album>%s</album>\n", track->album);
+    fprintf(fo,"\t\t\t\t\t<year>%d</year>\n", track->year);
+    fprintf(fo,"\t\t\t\t\t\t<genre>%s</genre>\n", track->genre);
+    return OK;
+}
+
 

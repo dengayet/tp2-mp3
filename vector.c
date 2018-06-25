@@ -20,6 +20,7 @@ status_t ADT_Vector_new (ADT_Vector_t ** p)
         *p = NULL;
         return ERROR_OUT_OF_MEMORY;
     }
+    (*p) -> alloc_size = INIT_CHOP;
     for(i = 0; i < INIT_CHOP; i++)
         (*p) -> elements[i] = NULL;
 }
@@ -78,5 +79,37 @@ status_t ADT_Vector_set_comparator(ADT_Vector_t *p, comparator_t pf)
     return OK;
 }
 
-/*faltaría ADT_Vector_load*/
+status_t ADT_Vector_append (ADT_Vector_t ** vector, void * element)
+{
+    void ** aux;
+    size_t i;
 
+    if (vector == NULL || element == NULL)
+        return ERROR_NULL_POINTER;
+    if((*vector)->alloc_size == (*vector)->size)
+        if((aux = (void **)realloc((*vector)->elements, ((*vector)->size + CHOP_SIZE)*sizeof(void*))) == NULL)
+        {
+            ADT_Vector_delete(vector);
+            return ERROR_OUT_OF_MEMORY;
+        }
+    (*vector)->elements = aux;
+    (*vector)->alloc_size += CHOP_SIZE;
+    (*vector)->elements[(*vector)->size] = element;
+    (*vector)->size ++;
+    return OK;
+}
+
+
+status_t (*ADT_Vector_print_to_file[MAX_FORMATS]) (ADT_Vector_t * vector, FILE* file) =
+        {
+                ADT_Vector_print_to_csv,
+                ADT_Vector_print_to_xml,
+
+        };
+
+status_t ADT_Vector_print_to_csv ( ADT_Vector_t * vector, FILE * file)
+{
+    if(vector == NULL || file == NULL)
+        return ERROR_NULL_POINTER;
+    fprintf(file, "")
+}

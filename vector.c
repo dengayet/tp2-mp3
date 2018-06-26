@@ -25,10 +25,11 @@ status_t ADT_Vector_new (ADT_Vector_t ** p)
         (*p) -> elements[i] = NULL;
 }
 
-status_t ADT_Vector_delete (ADT_Vector_t ** p)
+status_t ADT_Vector_delete (void ** pv)
 {
     size_t i;
     status_t st;
+    ADT_Vector_t **p=(ADT_Vector_t **)pv; /*casteo a ADT_Vector y pongo void como parámetro para no tener errores de punteros. igual funcionaria, pero lo dijo en clase*/
 
     for(i = 0; i < (*p)->size; i++)
     {
@@ -39,6 +40,7 @@ status_t ADT_Vector_delete (ADT_Vector_t ** p)
     (*p)->elements = NULL;
     free(*p);
     *p = NULL;
+
     return OK;
 }
 
@@ -47,6 +49,7 @@ status_t ADT_Vector_set_destructor (ADT_Vector_t * p, destructor_t pf)
     if (p == NULL)
         return ERROR_NULL_POINTER;
     p->destructor = pf;
+
     return OK;
 }
 
@@ -63,7 +66,7 @@ status_t ADT_Vector_sort(ADT_Vector_t *p) /*con selection sort*/
         min = i;
         for (j = i +1; j < p-> alloc_size; j++)
         {
-            if ((*(p->comparator))(p->elements[min], p->elements[j]) > 0) /*si min es mayor a elements[j]*/
+            if ((*(p->comparator))(p->elements[min], p->elements[j]) > 0) /*si elements[min] es mayor a elements[j]*/
                 min = j;
         }
         swap(p->elements[i],p->elements[min]);
@@ -111,5 +114,5 @@ status_t ADT_Vector_print_to_csv ( ADT_Vector_t * vector, FILE * file)
 {
     if(vector == NULL || file == NULL)
         return ERROR_NULL_POINTER;
-    fprintf(file, "")
+    fprintf(file, "");
 }

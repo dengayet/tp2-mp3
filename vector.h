@@ -26,6 +26,8 @@ status_t ADT_Vector_set_destructor (ADT_Vector_t *, destructor_t);
 status_t ADT_Vector_set_comparator (ADT_Vector_t *, comparator_t);
 status_t ADT_Vector_append (ADT_Vector_t **, void *);
 status_t ADT_Vector_sort (ADT_Vector_t *);
-status_t ADT_Vector_print_to_file(FILE *, ADT_Vector_t*);
+status_t ADT_Vector_print_to_xml(FILE *, ADT_Vector_t*);
+status_t ADT_Vector_print_to_csv(FILE*, ADT_Vector_t*);
+
 
 #endif

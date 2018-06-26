@@ -205,15 +205,16 @@ status_t ADT_Track_print_to_xml (FILE * fo, ADT_Track_t * track)
 {
     if(fo == NULL || track == NULL)
         return ERROR_NULL_POINTER;
-    fprintf(fo,"\t<track>");
-    fprintf(fo,"\t<tag>%s</tag>\n", track->tag);
-    fprintf(fo,"\t\t<title>%s</title>\n", track->title);
-    fprintf(fo,"\t\t\t<artist>%s</artist>\n", track->artist);
-    fprintf(fo,"\t\t\t\t<album>%s</album>\n", track->album);
-    fprintf(fo,"\t\t\t\t\t<year>%d</year>\n", track->year);
-    fprintf(fo,"\t\t\t\t\t\t<genre>%s</genre>\n", track->genre);
+    fprintf(fo,"\t<%s>", XML_TRACK_HEADER);
+    fprintf(fo,"\t\t<%s>%s</%s>\n", XML_TAG_HEADER, track->tag, XML_TAG_HEADER);
+    fprintf(fo,"\t\t\t<%s>%s</%s>\n", XML_TITLE_HEADER, track->title, XML_TITLE_HEADER);
+    fprintf(fo,"\t\t\t\t<%s>%s</%s>\n", XML_ARTIST_HEADER, track->artist, XML_ARTIST_HEADER);
+    fprintf(fo,"\t\t\t\t\t<%s>%s</%s>\n", XML_ALBUM_HEADER, track->album, XML_ALBUM_HEADER);
+    fprintf(fo,"\t\t\t\t\t\t<%s>%d</%s>\n", XML_YEAR_HEADER, track->year, XML_YEAR_HEADER);
+    fprintf(fo,"\t\t\t\t\t\t\t\t<%s>%s</%s>\n", XML_GENRE_HEADER, track->genre, XML_GENRE_HEADER);
     return OK;
 }
+
 int compare_strings(const char *s1,const char *s2)
 {
     return strcmp(s1,s2);

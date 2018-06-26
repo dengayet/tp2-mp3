@@ -116,3 +116,61 @@ status_t ADT_Vector_print_to_csv ( ADT_Vector_t * vector, FILE * file)
         return ERROR_NULL_POINTER;
     fprintf(file, "");
 }
+
+status_t ADT_Vector_append (ADT_Vector_t ** vector, void * element)
+{
+    void ** aux;
+
+    if (vector == NULL || element == NULL)
+        return ERROR_NULL_POINTER;
+    if((*vector)->alloc_size == (*vector)->size)
+        if((aux = (void **)realloc((*vector)->elements, ((*vector)->size + CHOP_SIZE)*sizeof(void*))) == NULL)
+        {
+            ADT_Vector_delete(vector);
+            return ERROR_OUT_OF_MEMORY;
+        }
+    (*vector)->elements = aux;
+    (*vector)->alloc_size += CHOP_SIZE;
+    (*vector)->elements[(*vector)->size] = element;
+    (*vector)->size ++;
+    return OK;
+}
+
+
+status_t (*ADT_Vector_print_to_file[MAX_FORMATS]) (FILE* file, ADT_Vector_t * vector) =
+        {
+                ADT_Vector_print_to_csv,
+                ADT_Vector_print_to_xml,
+
+        };
+
+status_t ADT_Vector_print_to_csv (FILE * file, ADT_Vector_t * vector)
+{
+    size_t i;
+    status_t st;
+
+    if(vector == NULL || file == NULL)
+        return ERROR_NULL_POINTER;
+    for(i = 0; i < vector->size; i++)
+    {
+        if((st = vector->printer(file, vector)) != OK)
+            return st;
+    }
+    return OK;
+}
+
+status_t ADT_Vector_print_to_xml (FILE * file, ADT_Vector_t * vector)
+{
+    size_t i;
+    status_t st;
+
+    if(vector == NULL || file == NULL)
+        return ERROR_NULL_POINTER;
+    fprintf(file, "<%s>", XML_HEADER);
+    for(i = 0; i < vector->size; i++)
+        if((st = vector->printer(file, vector)) != OK)
+            return st;
+    fprintf(file, "</%s>", XML_HEADER);
+    return OK;
+}
+
